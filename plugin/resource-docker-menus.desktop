@@ -4,5 +4,5 @@ ServiceTypes=Krita/PythonPlugin
 X-KDE-Library=resource-docker-menus
 X-Python-2-Compatible=false
 X-Krita-Manual=manual.html
-Name=Resource and Docker Menus
-Comment=Makes dockers and resources have their own menu
+Name=RD Menus
+Comment=Adds 2 new menus for Resources and dockers in the main menu
