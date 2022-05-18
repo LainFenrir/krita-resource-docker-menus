@@ -1,4 +1,4 @@
-# Resource and Docker Menus
+# RD Menus (Resource and Docker Menus)
 
 A simple plugin to add main menu entries for dockers and resources.
 
