@@ -16,7 +16,8 @@ rdMenus is a plugin for krita that adds resource and docker menus
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from PyQt5.QtWidgets import (QWidget, QAction)
-
+from .dMenu import DockerMenu
+from .rMenu import ResourceMenu
 # For autocomplete
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -24,9 +25,23 @@ if TYPE_CHECKING:
 else:
     from krita import *
 
+##TODO:
+# Add a settings submenu for dockers
+# move show title and show dockers to the settings submenu
+# add option to move scripter from scripts to tool menu
+# add option to show all dockers as just a list or submenu
+# add a favorite dockers section 
+# create dialog window to add dockers and arrange them in this list
+# save system for options and favorite docker list
+
+
 class RDMenus(Extension):
     def __init__(self, parent):
         super().__init__(parent)
+
+        #Instances the menu classes
+        self.dmenu = DockerMenu()
+        self.rmenu = ResourceMenu()
 
     # Krita.instance() exists, so do any setup work
     def setup(self):
@@ -40,51 +55,6 @@ class RDMenus(Extension):
     def createActions(self, window):
         pass
 
-    # Generates the resource menu 
-    def buildResourceMenu(self,main_menu):
-        # Grabbing already existing actions to be added to the menu
-        manage_bundles = Krita.instance().action('manage_bundles')
-        manage_resources = Krita.instance().action('manage_resources')
-
-        resourceMenu = main_menu.addMenu('Resources')
-        resourceMenu.addAction(manage_bundles)
-        resourceMenu.addAction(manage_resources)
-
-    # Grabs the toggleViewAction of all krita dockers and returns them in a list
-    # This generates a checkable action the same way as `settings_dockers_menu` is
-    def grabDockersActions(self):
-        dockers = Krita.instance().dockers()
-        actions = []
-        for docker in dockers:
-            actions.append(docker.toggleViewAction())
-        return actions
-
-    # Generates the docker menu 
-    def buildDockersMenu(self,main_menu):
-        #Grabs the actual dockers submenu 
-        # dockers_submenu = Krita.instance().action('settings_dockers_menu')
-
-        # grabs the dockers related actions:
-        # - to show dockers
-        # - to toggle the title of the dockers
-        show_dockers = Krita.instance().action('view_toggledockers')
-        show_titles = Krita.instance().action('view_toggledockertitlebars')
-
-        dockersMenu = main_menu.addMenu('Dockers')
-        dockersMenu.addAction(show_dockers)
-        dockersMenu.addAction(show_titles)
-        # dockersMenu.addSeparator()
-        dockersMenu.addSection('Dockers')
-
-        # adds the docker actions into the menu
-        docker_actions = self.grabDockersActions()
-        for action in docker_actions:
-            dockersMenu.addAction(action)
-
-        # this adds a dockers submenu to the dockers menu
-        # dockersMenu.addAction(dockers_submenu)
-
-
     # Calls the menus creation also adding a separator from the original krita menu
     def buildMenus(self):
         main_menu = Krita.instance().activeWindow().qwindow().menuBar()
@@ -95,6 +65,5 @@ class RDMenus(Extension):
         main_menu.addAction(separator)
 
         # Calls the bulding functions for the menus
-        self.buildResourceMenu(main_menu)
-        self.buildDockersMenu(main_menu)
-   
+        self.rmenu.buildResourceMenu(main_menu)
+        self.dmenu.buildDockersMenu(main_menu)
