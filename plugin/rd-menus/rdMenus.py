@@ -15,7 +15,7 @@ rdMenus is a plugin for krita that adds resource and docker menus
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-from PyQt5.QtWidgets import (QWidget, QAction)
+from PyQt5.QtWidgets import (QAction)
 from .dMenu import DockerMenu
 from .rMenu import ResourceMenu
 # For autocomplete
