@@ -31,15 +31,7 @@ else:
 class DockerMenu(object):
     def __init__(self):
         super()
-        self.dockerActionsNames = []
         self.dockerActions = []
-
-        # Had to put it hrere otherwise the QAction is not created
-        self.show_dockerSubmenu = QAction("Use Dockers Submenu")
-        self.show_dockerSubmenu.setCheckable(True)
-        self.show_dockerSubmenu.setStatusTip("Toggles between dockers submenu or the section")
-        self.show_dockerSubmenu.toggled.connect(self.toggleDockerSubMenu)
-
 
 
     # Grabs the toggleViewAction of all krita dockers and returns them in a list
@@ -59,27 +51,16 @@ class DockerMenu(object):
         dockersMenu = main_menu.addMenu('Dockers')
         dockersMenu.setObjectName('Dockers')
 
-        #Grabs the actual dockers submenu 
-        dockers_submenu = Krita.instance().action('settings_dockers_menu')
-        dockers_submenu.setVisible(False)
-        
-
-        optionsMenu = self.buildOptions(dockersMenu)
-        
-        # this adds a dockers submenu to the dockers menu
-        dockersMenu.addAction(dockers_submenu)
-        optionsMenu.addAction(self.show_dockerSubmenu)
-
-        dockersMenu.addSection('Dockers')
-
         # adds the docker actions into the menu
         docker_actions = self.grabDockersActions()
         self.dockerActions = docker_actions
 
-        for action in docker_actions:
-            self.dockerActionsNames.append(action.text())    
+        self.buildOptions(dockersMenu)
+
+        dockersMenu.addSection('Dockers')
         dockersMenu.addActions(docker_actions)
 
+    # Generates the Options submenu
     def buildOptions(self, dockers_menu):
         # grabs the dockers related actions:
         # - to show dockers
@@ -92,29 +73,3 @@ class DockerMenu(object):
 
         dOptionsMenu.addAction(show_dockers)
         dOptionsMenu.addAction(show_titles)
-        return dOptionsMenu
-
-    def toggleDockerSubMenu(self):
-        main_menu = Krita.instance().activeWindow().qwindow().menuBar()
-        dockers = main_menu.findChild(QMenu,'Dockers')
-        submenu = None
-        for d in dockers.actions():
-            if d.objectName() == "settings_dockers_menu":
-                submenu = d
-                break
-        
-        # Since the actions in the dockers submenu are the same as the ones in the menu,
-        # i cant make them invisble cause this will make them invisible in both places
-        # the only option i found is to remove and add them back to the menu
-        if self.show_dockerSubmenu.isChecked():
-            submenu.setVisible(True)
-            for d in dockers.actions():
-                if d.text() in self.dockerActionsNames:
-                    dockers.removeAction(d)
-
-
-        else:
-            submenu.setVisible(False)
-            for d in dockers.actions():
-                dockers.addActions(self.dockerActions)
-
